@@ -4,8 +4,9 @@ const airportDB = cloudant.db.use('airportdb');
 
 // TODO class or module?
 // TODO instantiate? dbname, etc?
+// TODO docstrings
 export default class AirportDB {
-    static async findAirports(longitudeRange: number[], latitudeRange: number[]) {
+    static async findAirports(latitudeRange: number[], longitudeRange: number[]) {
         console.log('findAirports');
         const query =
             `lon:[ ${longitudeRange[0]} TO ${longitudeRange[1]}] AND lat:[ ${latitudeRange[0]} TO ${latitudeRange[1]}]`;

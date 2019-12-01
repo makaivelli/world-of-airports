@@ -1,8 +1,9 @@
 import AirportsApi from './Airports';
 import AirportDB from '../airportDB';
 import geo from '../helpers/geo';
-jest.mock('../airportDB');
 import { mocked } from 'ts-jest/utils';
+
+jest.mock('../airportDB');
 
 const airportsApi = new AirportsApi();
 
@@ -19,6 +20,7 @@ describe('Airports API', () => {
         geo.getLatitudeRange = jest.fn().mockImplementation(() => [48, 52]);
 
         airportsApi.search(latitudeCentre, longitudeCentre, radius);
+        expect(geo.getLatitudeRange).toHaveBeenCalledTimes(1);
         expect(geo.getLatitudeRange).toHaveBeenCalledWith(50, 224);
     });
 
@@ -26,6 +28,7 @@ describe('Airports API', () => {
         geo.getLongitudeRange = jest.fn().mockImplementation(() => [-2, 2]);
 
         airportsApi.search(latitudeCentre, longitudeCentre, radius);
+        expect(geo.getLongitudeRange).toHaveBeenCalledTimes(1);
         expect(geo.getLongitudeRange).toHaveBeenCalledWith(0, 50, 224);
     });
 
@@ -36,8 +39,9 @@ describe('Airports API', () => {
         geo.getLongitudeRange = jest.fn().mockImplementation(() => longitudeRange);
         mocked(AirportDB.findAirports).mockResolvedValue([]);
 
-        airportsApi.search(latitudeCentre, longitudeCentre, radius);
+        airportsApi.search(longitudeCentre, latitudeCentre, radius);
         expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
+        expect(AirportDB.findAirports).toHaveBeenCalledWith(latitudeRange, longitudeRange);
     });
 
     // should call the db with the right params (lat, long, query format)

@@ -1,7 +1,6 @@
 import geo from '../helpers/geo';
 
 import AirportDB from '../airportDB';
-//const airportDB = new AirportDB();
 
 export default class AirportsApi {
     // integer?
@@ -9,7 +8,7 @@ export default class AirportsApi {
         // TODO validate
         const latRange: number[] = geo.getLatitudeRange(latitudeCentre, radius);
         const lonRange: number[] = geo.getLongitudeRange(longitudeCentre, latitudeCentre, radius);
-        const airports = await AirportDB.findAirports(lonRange, latRange);
+        const airports = await AirportDB.findAirports(latRange, lonRange);
         console.log('airports', airports);
         if (airports && airports.length) {
             // TODO handle pagination: request with bookmark if total_rows > rows
