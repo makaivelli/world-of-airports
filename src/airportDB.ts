@@ -6,15 +6,13 @@ const airportDB = cloudant.db.use('airportdb');
 // TODO instantiate? dbname, etc?
 // TODO docstrings
 export default class AirportDB {
-    static async findAirports(latitudeRange: number[], longitudeRange: number[]) {
-        console.log('findAirports');
+    static async findAirports(latitudeRange: number[], longitudeRange: number[], bookmark?: string) {
         const query =
             `lon:[ ${longitudeRange[0]} TO ${longitudeRange[1]}] AND lat:[ ${latitudeRange[0]} TO ${latitudeRange[1]}]`;
         // TODO try / catch
-        console.log('query', query);
-        const results = await airportDB.search('view1', 'geo', {q: query});
-        console.log('results', results);
-        // TODO pagination
-        return results.rows;
+        // Handle pagination
+        let params = bookmark ? {q: query, bookmark} : {q: query};
+        const results = await airportDB.search('view1', 'geo', params);
+        return {...results, query};
     }
 }

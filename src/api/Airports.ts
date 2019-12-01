@@ -4,14 +4,15 @@ import AirportDB from '../airportDB';
 
 export default class AirportsApi {
     // integer?
-    async search(latitudeCentre: number, longitudeCentre: number, radius: number) {
+    // use different method for next page?
+    async search(latitudeCentre: number, longitudeCentre: number, radius: number, bookmark?: string, query?: string) {
         // TODO validate
+        // TODO handle pagination in FE side: request with bookmark and query if total_rows > rows
         const latRange: number[] = geo.getLatitudeRange(latitudeCentre, radius);
         const lonRange: number[] = geo.getLongitudeRange(longitudeCentre, latitudeCentre, radius);
-        const airports = await AirportDB.findAirports(latRange, lonRange);
-        console.log('airports', airports);
-        if (airports && airports.length) {
-            // TODO handle pagination: request with bookmark if total_rows > rows
+        const result = await AirportDB.findAirports(latRange, lonRange);
+        if (result && result.rows && result.rows.length) {
+        const { total_rows, rows: airports, query } = result;
             const airportsWithDistances = airports.map(airport => {
                 const { lat, lon, name } = airport.fields;
                 const distance = geo.getDistance(latitudeCentre, lat, longitudeCentre, lon);
@@ -23,7 +24,12 @@ export default class AirportsApi {
             const airportsInRange = airportsWithDistances.filter(airport => geo.isInRadius(radius, airport.distance));
             const sortedAirportsInRange = airportsInRange.sort((a, b) => geo.compareByDistance(a, b));
             return sortedAirportsInRange;
+            return {
+                total_rows,
+                airports,
+                query
+            }
         }
-        return airports;
+        return [];
     }
 }

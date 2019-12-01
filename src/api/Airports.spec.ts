@@ -76,9 +76,15 @@ describe('Airports API', () => {
     });
 
     describe('after not empty response', () => {
-        const response = [
-            {fields: {lat: 3.836039, lon: 11.523461, name: 'Yaounde Ville'}},
-            {fields: {lat: 0.0226, lon: 18.288744, name: 'Mbandaka'}}];
+        const response = {
+            total_rows: 2,
+            bookmark: 'g1AAAAEPe...',
+            rows: [
+                {fields: {lat: 3.836039, lon: 11.523461, name: 'Yaounde Ville'}},
+                {fields: {lat: 0.0226, lon: 18.288744, name: 'Mbandaka'}},
+            ],
+            query: 'lon:[ -2 TO 2] AND lat:[ 48 TO 52 ]'
+        };
 
         beforeEach(() => {
             mocked(AirportDB.findAirports).mockResolvedValue(response);
