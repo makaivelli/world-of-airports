@@ -10,14 +10,48 @@
 import geo from '../helpers/geo';
 
 describe('geo helper', () => {
-    describe('getLatitudeRange', () => {
-        it('should return a range', () => {
-            const latitudeRange = geo.getLatitudeRange(0, 224);
-            expect(latitudeRange).toEqual([-2, 2]);
+    describe('getLatitudeStart', () => {
+        it('should return the latitude start point', () => {
+            const latitudeStart = geo.getLatitudeStart(5, 8);
+            expect(latitudeStart).toEqual(-3);
         });
+        it('should handle values overlapping -90', () => {
+            const latitudeStart = geo.getLatitudeStart(-85, 8);
+            expect(latitudeStart).toEqual(-90);
+        });
+    });
 
-        it('should handle latitude ranges over 90', () => {
-            const latitudeRange = geo.getLatitudeRange()
+    describe('getLatitudeEnd', () => {
+        it('should return the latitude end point', () => {
+            const latitudeEnd = geo.getLatitudeEnd(-3, 8);
+            expect(latitudeEnd).toEqual(5);
         });
-    })
+        it('should handle values overlapping 90', () => {
+            const latitudeEnd = geo.getLatitudeEnd(85, 8);
+            expect(latitudeEnd).toEqual(90);
+        });
+    });
+
+    describe('getLongitudeStart', () => {
+        it('should return the longitude start point', () => {
+            const longitudeStart = geo.getLongitudeStart(5, 8);
+            expect(longitudeStart).toEqual(-3);
+        });
+        it('should handle values overlapping -180', () => {
+            const longitudeStart = geo.getLongitudeStart(-175, 8);
+            expect(longitudeStart).toEqual(177);
+        });
+    });
+
+    describe('getLongitudeEnd', () => {
+        it('should return the latitude end point', () => {
+            const longitudeEnd = geo.getLongitudeEnd(-3, 8);
+            expect(longitudeEnd).toEqual(5);
+        });
+        it('should handle values overlapping 180', () => {
+            const longitudeEnd = geo.getLongitudeEnd(175, 8);
+            expect(longitudeEnd).toEqual(-177);
+        });
+    });
+
 });
