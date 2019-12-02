@@ -1,8 +1,12 @@
 const getLatitudeRange = (latCentre: number, radius: number) => {
     // TODO check if db accepts -1
-    // TODO 185 -> -175
+    // TODO 90 -> 5
+    // overlap to other side? - same with 0 and -1, longitude
     // https://en.wikipedia.org/wiki/Latitude#Length_of_a_degree_of_latitude
-    // TODO handle 180 + 5!!!
+    // Latitude lengths are between 110.574 and 111.694 km. Using here a rough (over)estimation
+    const kmPerDeg = 112;
+    const offsetDeg:number = Math.ceil(radius / kmPerDeg);
+    return [latCentre - offsetDeg, latCentre + offsetDeg];
 };
 
 const getLongitudeRange = (lonCentre: number, latCentre: number, radius: number) => {
