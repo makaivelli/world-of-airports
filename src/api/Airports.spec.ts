@@ -9,120 +9,101 @@ jest.mock('../helpers/geo');
 const airportsApi = new AirportsApi();
 
 describe('Airports API', () => {
-    const latitudeCentre = 50;
-    const longitudeCentre = 0;
-    const radius = 224;
-    const longitudeRange = [-2, 2];
-    const latitudeRange = [48, 52];
-
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    it(`should call 'getLatitudeRange with' 'latitudeCentre'`, () => {
-        geo.getLatitudeRange = jest.fn().mockImplementation(() => latitudeRange);
+    describe('search', () => {
+        it('should get the latitude offset', () => {
+            geo.getLatitudeOffset = jest.fn().mockImplementation();
 
-        airportsApi.search(latitudeCentre, longitudeCentre, radius);
+            airportsApi.search(0, 0, 112, );
+            expect(geo.getLatitudeOffset).toHaveBeenCalledTimes(1);
+            expect(geo.getLatitudeOffset).toHaveBeenCalledWith(0, 112);
+        });
 
-        expect(geo.getLatitudeRange).toHaveBeenCalledTimes(1);
-        expect(geo.getLatitudeRange).toHaveBeenCalledWith(50, 224);
-    });
+        it('should get the latitude start', () => {
+            geo.getLatitudeOffset = jest.fn().mockImplementation(() => 1);
+            geo.getLatitudeStart = jest.fn().mockImplementation();
 
-    it(`should call 'getLongitudeRange with' expected params`, () => {
-        geo.getLongitudeRange = jest.fn().mockImplementation(() => longitudeRange);
+            airportsApi.search(0, 0, 112, );
+            expect(geo.getLatitudeStart).toHaveBeenCalledTimes(1);
+            expect(geo.getLatitudeStart).toHaveBeenCalledWith(0, 1);
+        });
 
-        airportsApi.search(latitudeCentre, longitudeCentre, radius);
+        it('should get the latitude end', () => {
+            geo.getLatitudeOffset = jest.fn().mockImplementation(() => 1);
+            geo.getLatitudeEnd = jest.fn().mockImplementation();
 
-        expect(geo.getLongitudeRange).toHaveBeenCalledTimes(1);
-        expect(geo.getLongitudeRange).toHaveBeenCalledWith(0, 50, 224);
-    });
+            airportsApi.search(0, 0, 112, );
+            expect(geo.getLatitudeStart).toHaveBeenCalledTimes(1);
+            expect(geo.getLatitudeStart).toHaveBeenCalledWith(0, 1);
+        });
 
-    it(`should search with expected params`, () => {
-        geo.getLatitudeRange = jest.fn().mockImplementation(() => latitudeRange);
-        geo.getLongitudeRange = jest.fn().mockImplementation(() => longitudeRange);
-        mocked(AirportDB.findAirports).mockResolvedValue([]);
+        it('should get the longitude offset if latitude does not overlap the pole', () => {
+            geo.isOverThePole = jest.fn().mockImplementation(() => false);
+            geo.getLongitudeOffset = jest.fn().mockImplementation();
 
-        airportsApi.search(longitudeCentre, latitudeCentre, radius);
+            airportsApi.search(0, 0, 112, );
+            expect(geo.getLongitudeOffset).toHaveBeenCalledTimes(1);
+            expect(geo.getLongitudeOffset).toHaveBeenCalledWith(0, 0,112);
+        });
 
-        expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
-        expect(AirportDB.findAirports).toHaveBeenCalledWith(latitudeRange, longitudeRange);
-    });
+        it('should not get the longitude offset if latitude overlaps the pole', () => {
+            geo.isOverThePole = jest.fn().mockImplementation(() => true);
+            geo.getLongitudeOffset = jest.fn().mockImplementation();
 
-    describe('after empty response', () => {
-        beforeEach(() => {
+            airportsApi.search(89, 0, 224, );
+            expect(geo.getLongitudeOffset).not.toHaveBeenCalled();
+        });
+
+        it('should get the longitude start if latitude does not overlap the pole', () => {
+            geo.getLongitudeOffset = jest.fn().mockImplementation(() => 1);
+            geo.isOverThePole = jest.fn().mockImplementation(() => false);
+            geo.getLongitudeStart = jest.fn().mockImplementation();
+
+            airportsApi.search(0, 0, 112, );
+            expect(geo.getLongitudeStart).toHaveBeenCalledTimes(1);
+            expect(geo.getLongitudeStart).toHaveBeenCalledWith(0, 1);
+        });
+
+        it('should not get the longitude start if latitude overlaps the pole', () => {
+            geo.isOverThePole = jest.fn().mockImplementation(() => true);
+            geo.getLongitudeStart = jest.fn().mockImplementation();
+
+            airportsApi.search(89, 0,224, );
+            expect(geo.getLongitudeStart).not.toHaveBeenCalled();
+        });
+
+        it('should get the longitude end if latitude does not overlap the pole', () => {
+            geo.getLatitudeOffset = jest.fn().mockImplementation(() => 1);
+            geo.isOverThePole = jest.fn().mockImplementation(() => false);
+            geo.getLongitudeEnd = jest.fn().mockImplementation();
+
+            airportsApi.search(0, 0, 112, );
+            expect(geo.getLongitudeEnd).toHaveBeenCalledTimes(1);
+            expect(geo.getLongitudeEnd).toHaveBeenCalledWith(0, 1);
+        });
+
+        it('should not get the longitude end if latitude overlaps the pole', () => {
+            geo.isOverThePole = jest.fn().mockImplementation(() => true);
+            geo.getLongitudeEnd = jest.fn().mockImplementation();
+
+            airportsApi.search(-89, 0,224, );
+            expect(geo.getLongitudeEnd).not.toHaveBeenCalled();
+        });
+
+        it(`should call 'findAirports' with expected params`, () => {
+            geo.getLatitudeOffset = jest.fn().mockImplementation(() => 2);
+            geo.getLatitudeStart = jest.fn().mockImplementation(() => 89);
+            geo.getLatitudeEnd = jest.fn().mockImplementation(() => 90);
+            geo.isOverThePole = jest.fn().mockImplementation(() => true);
             mocked(AirportDB.findAirports).mockResolvedValue([]);
+
+            airportsApi.search(89, 0, 224);
+            expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
+            expect(AirportDB.findAirports).toHaveBeenCalledWith([89, 90], [-180, 180], 224);
         });
 
-        it(`should not call 'getDistance'`, async () => {
-            geo.getDistance = jest.fn().mockImplementation(() => 23);
-            await airportsApi.search(longitudeCentre, latitudeCentre, radius);
-
-            expect(geo.getDistance).not.toHaveBeenCalled();
-        });
-
-        it(`should not filter by 'isInRadius'`, async () => {
-            geo.isInRadius = jest.fn().mockImplementation(() => 23);
-            await airportsApi.search(longitudeCentre, latitudeCentre, radius);
-
-            expect(geo.isInRadius).not.toHaveBeenCalled();
-        });
-
-        it(`should not sort by 'compareByDistance'`, async () => {
-            geo.compareByDistance = jest.fn().mockImplementation(() => -1);
-            await airportsApi.search(longitudeCentre, latitudeCentre, radius);
-
-            expect(geo.compareByDistance).not.toHaveBeenCalled();
-        })
     });
-
-    describe('after not empty response', () => {
-        const response = {
-            total_rows: 2,
-            bookmark: 'g1AAAAEPe...',
-            rows: [
-                {fields: {lat: 3.836039, lon: 11.523461, name: 'Yaounde Ville'}},
-                {fields: {lat: 0.0226, lon: 18.288744, name: 'Mbandaka'}},
-            ],
-            query: 'lon:[ -2 TO 2] AND lat:[ 48 TO 52 ]'
-        };
-
-        beforeEach(() => {
-            mocked(AirportDB.findAirports).mockResolvedValue(response);
-        });
-
-        it(`should call 'getDistance' for every airport`, async () => {
-            geo.getDistance = jest.fn().mockImplementation(() => 23);
-
-            await airportsApi.search(longitudeCentre, latitudeCentre, radius);
-
-            expect(geo.getDistance).toHaveBeenCalledTimes(2);
-        });
-
-        it(`should filter by 'isInRadius'`, async () => {
-            geo.isInRadius = jest.fn().mockImplementation(() => 23);
-
-            await airportsApi.search(longitudeCentre, latitudeCentre, radius);
-
-            expect(geo.isInRadius).toHaveBeenCalledTimes(2);
-        });
-
-        it(`should sort by 'compareByDistance'`, async () => {
-            geo.compareByDistance = jest.fn().mockImplementation(() => -1);
-
-            await airportsApi.search(longitudeCentre, latitudeCentre, radius);
-
-            expect(geo.compareByDistance).toHaveBeenCalledTimes(1)
-        })
-    });
-
-
-    // should call the db with the right params (lat, long, query format)
-    // TODO should handle pagination
-    // should call the getDistance function
-    // should call the filter distance function (boundig box > radius)
-    // should sort the airports by distance
-
-    // integration:
-    // endpoint test: TODO validation!!!
-    // where to put helpers?
 });
