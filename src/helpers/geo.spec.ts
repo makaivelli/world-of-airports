@@ -54,4 +54,35 @@ describe('geo helper', () => {
         });
     });
 
+    describe('isOverThePole', () => {
+        it('should return false is latitude not overlapping the pole', () => {
+            const latCentres = [80, -80];
+            const latOffset = 5;
+
+            latCentres.map(latCentre => {
+                const isOverLapping = geo.isOverThePole(latCentre, latOffset);
+                expect(!isOverLapping);
+            })
+        });
+
+        it('should return false is latitude touching the pole', () => {
+            const latCentres = [80, -80];
+            const latOffset = 10;
+
+            latCentres.map(latCentre => {
+                const isOverLapping = geo.isOverThePole(latCentre, latOffset);
+                expect(!isOverLapping);
+            });
+        });
+
+        it('should return true is latitude overlaps the pole', () => {
+            const latCentres = [80, -80];
+            const latOffset = 15;
+
+            latCentres.map(latCentre => {
+                const isOverLapping = geo.isOverThePole(latCentre, latOffset);
+                expect(isOverLapping);
+            });
+        });
+    });
 });
