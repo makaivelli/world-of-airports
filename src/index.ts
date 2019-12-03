@@ -17,52 +17,65 @@ app.get('/airports', (req: express.Request, res: express.Response) => {
         const { bookmark, latitudeRange, longitudeRange, radius } = prevQuery;
         // Validate
         if (!bookmark || !latitudeRange || !longitudeRange || !radius) {
-            // send error
-            return res.header(`err: fields 'bookmark', 'latitudeRange', 'longitudeRange' and 'radius' are required when 'prevQuery' is present`);
+            return res.status(400).json({
+                status: 'error',
+                message: `fields 'bookmark', 'latitudeRange', 'longitudeRange' and 'radius' are required when 'prevQuery' is present`,
+            });
         }
         return res.json(airportsApi.getNextPage(bookmark, latitudeRange, longitudeRange, radius));
     }
     // lat, lon and radius are required if first page search
     if (!lat || !lon || !radius) {
-        // send error
-        return res.header(`err: fields 'lat', 'lon and 'range' are required when 'prevQuery' is not present`);
+        return res.status(400).json({
+            status: 'error',
+            message: `fields 'lat', 'lon and 'range' are required when 'prevQuery' is not present`,
+        });
 
     }
 
     // Validate lat: numb <= 90
-    try {
-        // int or float? -- check if it throws error
-        lat = parseFloat(lat)
-    } catch (e) {
-        // todo check node error return
-        throw new Error()
+    lat = parseFloat(lat);
+    if (!isNaN(lat)) {
+        return res.status(400).json({
+            status: 'error',
+            message: `Field 'lat', must be a number`,
+        });
     }
-    if (!(Math.abs(lat) <= 90)) {
-        // throw out of range error
+    if (Math.abs(lat) > 90) {
+        return res.status(400).json({
+            status: 'error',
+            message: `Field 'lat', must be in the range of [-90, 90]`,
+        });
     }
 
     // Validate lon: number <= 180
-    try {
-        // int or float? -- check if it throws error
-        lon = parseFloat(lon)
-    } catch (e) {
-        // todo check node error return
-        throw new Error()
+    lon = parseFloat(lon);
+    if (!isNaN(lat)) {
+        return res.status(400).json({
+            status: 'error',
+            message: `Field 'lon', must be a number`,
+        });
     }
-    if (!(Math.abs(lon) <= 180)) {
-        // throw out of range error
+    if (Math.abs(lon) > 180) {
+        return res.status(400).json({
+            status: 'error',
+            message: `Field 'lon', must be in the range of [-180, 180]`,
+        });
     }
 
-    // Validate radius: number <= 3000 - arbitrary, but probably sensible radius limit
-    try {
-        // int or float? -- check if it throws error
-        radius = parseFloat(radius)
-    } catch (e) {
-        // todo check node error return
-        throw new Error()
+    // Validate radius: number <= 500 - arbitrary, but probably sensible radius limit
+    radius = parseFloat(radius);
+    if (!isNaN(lat)) {
+        return res.status(400).json({
+            status: 'error',
+            message: `Field 'radius', must be a number`,
+        });
     }
-    if (!(Math.abs(lon) <= 3000)) {
-        // throw out of range error
+    if (radius < 1 || radius > 500) {
+        return res.status(400).json({
+            status: 'error',
+            message: `Field 'radius', must be in the range of [1, 500]`,
+        });
     }
     return res.json(airportsApi.search(lat, lon, radius));
 });
