@@ -1,15 +1,16 @@
 import geo from '../helpers/geo';
 
 import AirportDB from '../airportDB';
+import { IAirportsResult, IResource } from '../types/api';
 
-export default class AirportsApi {
+export default class AirportsApi implements IResource {
     // integer?
     private returnSortedAirportsInRange(result, latitudeCentre, longitudeCentre, radius) {
         if (result && result.rows && result.rows.length) {
             const { total_rows, rows: airports, query } = result;
             const airportsWithDistances = airports.map(airport => {
                 const { lat, lon, name } = airport.fields;
-                const distance = geo.getDistance(latitudeCentre, lat, longitudeCentre, lon);
+                const distance: number = geo.getDistance(latitudeCentre, lat, longitudeCentre, lon);
                 return {
                     name,
                     distance
