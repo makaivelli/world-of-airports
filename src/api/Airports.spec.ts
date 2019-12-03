@@ -104,6 +104,15 @@ describe('Airports API', () => {
             expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
             expect(AirportDB.findAirports).toHaveBeenCalledWith([89, 90], [-180, 180], 224);
         });
+    });
 
+    describe('getNextPage', () => {
+        it(`should call 'findAirports with expected params`, () => {
+            mocked(AirportDB.findAirports).mockResolvedValue([]);
+
+            airportsApi.getNextPage('g1AAAAE...', [-2, 2], [5, 7], 300);
+            expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
+            expect(AirportDB.findAirports).toHaveBeenCalledWith([-2, 2], [5, 7], 300);
+        });
     });
 });
