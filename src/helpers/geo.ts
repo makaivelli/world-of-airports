@@ -61,8 +61,13 @@ const getDistance = (latitudeCentre: number, latitudeTarget: number, longitudeCe
 };
 
 const geo = {
-    getLatitudeRange,
-    getLongitudeRange,
+    getLatitudeOffset,
+    getLongitudeOffset,
+    getLatitudeStart,
+    getLatitudeEnd,
+    getLongitudeStart,
+    getLongitudeEnd,
+    isOverThePole,
     isInRadius,
     compareByDistance,
     getDistance
