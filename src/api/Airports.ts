@@ -25,7 +25,7 @@ export default class AirportsApi {
         return [];
     }
     async getNextPage(bookmark: string, remainingPages: number, latRange: number[], lonRange: number[], latCentre: number, lonCentre:number, radius: number) {
-        const result = await AirportDB.findAirports(latRange, lonRange, radius, bookmark);
+        const result = await AirportDB.findAirports(latRange, lonRange, bookmark);
         const airportsWithDistancesInRadius = this.airportsWithDistancesInRadius(result.rows, latCentre, lonCentre, radius);
         remainingPages--;
         const query = {
@@ -66,7 +66,7 @@ export default class AirportsApi {
         }
         const latRange = [latStart, latEnd];
         const lonRange = [lonStart, lonEnd];
-        const result = await AirportDB.findAirports(latRange, lonRange, radius);
+        const result = await AirportDB.findAirports(latRange, lonRange);
         const airportsWithDistancesInRadius = this.airportsWithDistancesInRadius(result.rows, latCentre, lonCentre, radius);
         const query: IQuery = {
             latRange,

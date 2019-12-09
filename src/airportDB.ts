@@ -10,11 +10,13 @@ const SEARCH_NAME = 'geo';
 // TODO instantiate? dbname, etc?
 // TODO docstrings
 export default class AirportDB {
-    static async findAirports(latitudeRange: number[], longitudeRange: number[], radius: number, bookmark?: string): Promise<IAirportsDBResult> {
-        // radius is needed for filtering later
+    static async findAirports(
+        latitudeRange: number[],
+        longitudeRange: number[],
+        bookmark?: string): Promise<IAirportsDBResult> {
         const query =
             `lon:[ ${longitudeRange[0]} TO ${longitudeRange[1]}] AND lat:[ ${latitudeRange[0]} TO ${latitudeRange[1]}]`;
-        let params = bookmark ? {q: query, bookmark} : {q: query};
+        const params = bookmark ? {q: query, bookmark} : {q: query};
         try {
             return await airportDB.search(DESIGN_NAME, SEARCH_NAME, params);
         } catch (e) {
