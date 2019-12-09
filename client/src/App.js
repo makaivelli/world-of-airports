@@ -17,49 +17,59 @@ export default class Index extends Component {
     };
   }
 
+  async fetchWrapper(url) {
+    // fetch does not reject on HTTP errors: https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch
+    try {
+      const response = await fetch(url);
+      const body = await response.json();
+      if (response.ok) {
+        this.handleResponse(body);
+      } else {
+        throw new Error(body.message);
+      }
+    } catch (e) {
+      this.handleError(e);
+    }
+  }
+
   handleError(error) {
     this.setState({
       inProgress: false
     });
-    console.error('error', error);
+    alert(error);
   }
 
-  async handleNextPage(response) {
-    let params = new URLSearchParams();
-    params.set('prevQuery', response.query);
-    return fetch(`${base_url}?${params}`)
+  handleNextPage(pagination) {
+    let params = new URLSearchParams({prevQuery: JSON.stringify(pagination)});
+    return this.fetchWrapper(`${base_url}?${params}`);
   }
 
-  async handleResponse(response, previousPage = []) {
-    const body = await response.json();
-    const fetchedAirports = [ ...previousPage, ...body.airports ];
-    if (response.total_rows > fetchedAirports.length) {
-      const nextPage = await this.handleNextPage(response);
-      this.handleResponse(nextPage, fetchedAirports);
-    } else {
-      this.sortAirports(fetchedAirports);
+  async handleResponse(body) {
+    let inProgress = false;
+    if (body && body.pagination && body.pagination.remainingPages) {
+      inProgress = true;
+      await this.handleNextPage(body.pagination);
     }
-  }
-
-  sortAirports(airports) {
-    const items = [ ...airports ];
-    items.sort((a, b) => a.distance - b.distance);
+    const sortedAirports = this.sortAirports(body.airports);
     this.setState({
-      airports: items,
-      inProgress: false
+      airports: sortedAirports,
+      inProgress
     });
   }
 
-  async handleSubmit(evt) {
+  sortAirports(airports = []) {
+    const items = [ ...this.state.airports, ...airports ];
+    return items.sort((a, b) => a.distance - b.distance);
+  }
+
+  handleSubmit(evt) {
     evt.preventDefault();
     this.setState({
       airports: [],
       inProgress: true,
     });
     let params = new URLSearchParams({lat: this.state.lat, lon: this.state.lon, rad: this.state.rad});
-    fetch(`${base_url}?${params}`)
-      .then(this.handleResponse.bind(this))
-      .catch(this.handleError.bind(this));
+    this.fetchWrapper(`${base_url}?${params}`);
   }
 
   handleInputChange(event) {
