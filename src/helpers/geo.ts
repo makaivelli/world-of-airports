@@ -35,7 +35,8 @@ const isOverThePole = (latCentre: number, latOffset: number) => {
 const getLatitudeOffset = (latCentre: number, radius: number) => {
     // https://en.wikipedia.org/wiki/Latitude#Length_of_a_degree_of_latitude
     // Latitude lengths are between 110.574 and 111.694 km. Using here a rough (over)estimation
-    const kmPerDeg = 112;
+    const kmPerDeg = 111.7;
+    // add +10% then ceil to DD:MM ?
     const offsetDeg:number = Math.ceil(radius / kmPerDeg);
     return offsetDeg;
 };
@@ -44,6 +45,7 @@ const getLongitudeOffset = (lonCentre: number, latCentre: number, radius: number
     // https://en.wikipedia.org/wiki/Longitude#Length_of_a_degree_of_longitude
     const latCentreRad: number = toRadians(latCentre);
     const kmPerDeg: number = toRadians(1) * R * Math.cos(latCentreRad);
+    // add +10% then ceil to DD:MM ?
     const offsetDeg: number = Math.ceil(radius / kmPerDeg);
     return offsetDeg;
 };
