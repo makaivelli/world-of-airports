@@ -56,8 +56,20 @@ const compareByDistance = (a, b) => {
     return a.distance - b.distance
 };
 
-const getDistance = (latitudeCentre: number, latitudeTarget: number, longitudeCentre: number, longitudeTarget: number) => {
+const getDistance = (latCentre: number, latTarget: number, lonCentre: number, lonTarget: number) => {
     // Using 'haversine formula' - https://www.movable-type.co.uk/scripts/latlong.html
+    const deltaLatRad: number = toRadians(latTarget - latCentre);
+    const deltaLonRad: number = toRadians(lonTarget - lonCentre);
+    const latCentreRad: number = toRadians(latCentre);
+    const latTargetRad: number = toRadians(latTarget);
+
+    const a = Math.sin(deltaLatRad/2) * Math.sin(deltaLatRad/2) +
+        Math.cos(latCentreRad) * Math.cos(latTargetRad) *
+        Math.sin(deltaLonRad/2) * Math.sin(deltaLonRad/2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
 };
 
 const geo = {
