@@ -87,8 +87,7 @@ export default class Index extends Component {
             <input
               name="lat"
               id="lat"
-              min={-90}
-              max={90}
+              placeholder="-90 - 90"
               onChange={this.handleInputChange}
               value={this.state.lat}
             />
@@ -98,19 +97,17 @@ export default class Index extends Component {
             <input
               name="lon"
               id="lon"
-              min={-180}
-              max={180}
+              placeholder="-180 - 180"
               onChange={this.handleInputChange}
               value={this.state.lon}
             />
           </label>
           <label htmlFor="rad">
-            Radius
+            Radius (km)
             <input
               name="rad"
               id="rad"
-              min={1}
-              max={500}
+              placeholder="1 - 500"
               onChange={this.handleInputChange}
               value={this.state.rad}
             />
@@ -120,6 +117,11 @@ export default class Index extends Component {
           </div>
         </form>
         <div>
+          {this.state.inProgress &&
+          <p>
+            Loading...
+          </p>
+          }
           <ol>
             {airportsList}
           </ol>
