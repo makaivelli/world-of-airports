@@ -1,10 +1,10 @@
 import geo from '../helpers/geo';
 
 import AirportDB from '../airportDB';
-import { IAirportsResult, IResource } from '../types/api';
+import { IAirportRow, IQuery } from '../types';
 
 export default class AirportsApi {
-    private airportsWithDistancesInRadius(rows, latCentre, lonCentre, radius) {
+    private airportsWithDistancesInRadius(rows: IAirportRow[], latCentre: number, lonCentre:number, radius:number) {
         if (rows && rows.length) {
             const airportsWithDistances = rows.map(airport => {
                 const id = airport.id;
@@ -68,7 +68,7 @@ export default class AirportsApi {
         const lonRange = [lonStart, lonEnd];
         const result = await AirportDB.findAirports(latRange, lonRange, radius);
         const airportsWithDistancesInRadius = this.airportsWithDistancesInRadius(result.rows, latCentre, lonCentre, radius);
-        const query = {
+        const query: IQuery = {
             latRange,
             lonRange,
             latCentre,
