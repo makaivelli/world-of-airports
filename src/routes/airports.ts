@@ -5,33 +5,35 @@ import AirportsApi from '../api/Airports';
 const airportsApi = new AirportsApi();
 
 export default async function airportsRoute (req: express.Request, res: express.Response) {
-    let {prevQuery, lat, lon, radius} = req.query;
-    // TODO validate manually?
+    let { prevQuery, lat, lon, rad } = req.query;
     // manual validation - if it weren't a coding test, I'd use Joi or other validation library
     // Handle next page search
     if (prevQuery) {
-        const {bookmark, latitudeRange, longitudeRange, radius} = prevQuery;
+        let prevQueryObj = JSON.parse(prevQuery);
+        const {bookmark, query, remainingPages} = prevQueryObj;
+        const {latRange, lonRange, radius, latCentre, lonCentre} = query;
         // Validate
-        if (!bookmark || !latitudeRange || !longitudeRange || !radius) {
+        if (!bookmark || !latRange || !lonRange || !radius || !remainingPages || !lonCentre || !latCentre) {
             return res.status(400).json({
                 status: 'error',
-                message: `fields 'bookmark', 'latitudeRange', 'longitudeRange' and 'radius' are required when 'prevQuery' is present`,
+                message: `Fields 'bookmark', 'latRange', 'longRange', 'radius', 'latCentre', 'lonCentre' and 'remainingPages' are required when 'prevQuery' is present`,
             });
         }
-        return res.json(airportsApi.getNextPage(bookmark, latitudeRange, longitudeRange, radius));
+        const nextPage = await airportsApi.getNextPage(bookmark, remainingPages, latRange, lonRange, latCentre, lonCentre, radius);
+        return res.json(nextPage);
     }
     // lat, lon and radius are required if first page search
-    if (!lat || !lon || !radius) {
+    if (!lat || !lon || !rad) {
         return res.status(400).json({
             status: 'error',
-            message: `fields 'lat', 'lon and 'range' are required when 'prevQuery' is not present`,
+            message: `Fields 'lat', 'lon and 'range' are required when 'prevQuery' is not present`,
         });
 
     }
 
     // Validate lat: numb <= 90
     lat = parseFloat(lat);
-    if (!isNaN(lat)) {
+    if (isNaN(lat)) {
         return res.status(400).json({
             status: 'error',
             message: `Field 'lat', must be a number`,
@@ -46,7 +48,7 @@ export default async function airportsRoute (req: express.Request, res: express.
 
     // Validate lon: number <= 180
     lon = parseFloat(lon);
-    if (!isNaN(lat)) {
+    if (isNaN(lon)) {
         return res.status(400).json({
             status: 'error',
             message: `Field 'lon', must be a number`,
@@ -60,19 +62,19 @@ export default async function airportsRoute (req: express.Request, res: express.
     }
 
     // Validate radius: number <= 500 - arbitrary, but probably sensible radius limit
-    radius = parseFloat(radius);
-    if (!isNaN(lat)) {
+    rad = parseFloat(rad);
+    if (isNaN(lat)) {
         return res.status(400).json({
             status: 'error',
             message: `Field 'radius', must be a number`,
         });
     }
-    if (radius < 1 || radius > 500) {
+    if (rad < 1 || rad > 500) {
         return res.status(400).json({
             status: 'error',
             message: `Field 'radius', must be in the range of [1, 500]`,
         });
     }
-
-    return res.json(airportsApi.search(lat, lon, radius));
+    const result = await airportsApi.search(lat, lon, rad);
+    return res.json(result);
 };
