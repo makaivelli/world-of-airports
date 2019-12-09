@@ -13,10 +13,10 @@ export default async function airportsRoute (req: express.Request, res: express.
         const {bookmark, query, remainingPages} = prevQueryObj;
         const {latRange, lonRange, radius, latCentre, lonCentre} = query;
         // Validate
-        if (!bookmark || !latRange || !lonRange || !radius || !remainingPages || !lonCentre || !latCentre) {
+        if (!bookmark || !latRange || !lonRange || !radius || !remainingPages || lonCentre === undefined || latCentre === undefined) {
             return res.status(400).json({
                 status: 'error',
-                message: `Fields 'bookmark', 'latRange', 'longRange', 'radius', 'latCentre', 'lonCentre' and 'remainingPages' are required when 'prevQuery' is present`,
+                message: `Fields 'bookmark', 'latRange', 'lonRange', 'radius', 'latCentre', 'lonCentre' and 'remainingPages' are required when 'prevQuery' is present`,
             });
         }
         const nextPage = await airportsApi.getNextPage(bookmark, remainingPages, latRange, lonRange, latCentre, lonCentre, radius);
