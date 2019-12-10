@@ -10,7 +10,6 @@ const airportDB = cloudant.db.use('airportdb');
  */
 export default class AirportDBWrapper {
     public search(DESIGN_NAME: string, SEARCH_NAME: string, params: object): Promise<IAirportsDBResult> {
-        console.log('not mocked', params);
         return airportDB.search(DESIGN_NAME, SEARCH_NAME, params)
     }
 }
