@@ -5,7 +5,6 @@ export interface IFieldRow {
 }
 
 export interface IAirportRow {
-    // TODO what else?
     id: string,
     fields: IFieldRow,
     order: number[]
@@ -34,12 +33,12 @@ export interface IQuery {
 }
 
 export interface IPagination {
-    query: IQuery,
+    query: any,
     remainingPages: number,
-    bookmark: number
+    bookmark: string
 }
 
 export interface IAirportsResult {
     airports: IAirports[],
-    pagination: IPagination[]
+    pagination: IPagination
 }
