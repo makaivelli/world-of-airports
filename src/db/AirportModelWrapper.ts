@@ -8,10 +8,9 @@ const SEARCH_NAME = 'geo';
  * Contains query logic and helps unit testing.
  */
 export default class AirportModelWrapper {
-    private airportDB: any;
-    constructor(airportDB) {
-        this.airportDB = airportDB;
-        console.log('this.airportDB', this.airportDB);
+    private readonly airportDBWrapper: any;
+    constructor(airportDBWrapper) {
+        this.airportDBWrapper = airportDBWrapper;
     }
 
     async findAirports(latitudeRange: number[],
@@ -22,13 +21,11 @@ export default class AirportModelWrapper {
             `lon:[ ${longitudeRange[0]} TO ${longitudeRange[1]}] AND lat:[ ${latitudeRange[0]} TO ${latitudeRange[1]}]`;
         // Handle next page query
         const params = bookmark ? {q: query, bookmark} : {q: query};
-        
-        console.log('params', params);
 
         try {
-            return await this.airportDB.search(DESIGN_NAME, SEARCH_NAME, params);
+            return await this.airportDBWrapper.search(DESIGN_NAME, SEARCH_NAME, params);
         } catch (e) {
-            console.error(e);
+            console.error(e); // In real code I'd use an error tracking / monitoring tool
             throw new Error('Error');
         }
     }
