@@ -7,8 +7,8 @@ import AirportModelWrapper from './db/AirportModelWrapper';
 import AirportsApi from './api/Airports';
 import AirportsRoute from './routes/airports';
 
-const airportDB = new AirportDBWrapper();
-const airportModelWrapper = new AirportModelWrapper(airportDB);
+const airportDBWrapper = new AirportDBWrapper();
+const airportModelWrapper = new AirportModelWrapper(airportDBWrapper);
 const airportsApi = new AirportsApi(airportModelWrapper);
 const airportsRoute = new AirportsRoute(airportsApi);
 
