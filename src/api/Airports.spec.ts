@@ -33,7 +33,7 @@ describe('Airports API', () => {
 
             airportsApi.search(0, 0, 112, );
             expect(geo.getLatitudeOffset).toHaveBeenCalledTimes(1);
-            expect(geo.getLatitudeOffset).toHaveBeenCalledWith(0, 112);
+            expect(geo.getLatitudeOffset).toHaveBeenCalledWith(112);
         });
 
         it('should get the latitude start', () => {
@@ -60,7 +60,7 @@ describe('Airports API', () => {
 
             airportsApi.search(0, 0, 112, );
             expect(geo.getLongitudeOffset).toHaveBeenCalledTimes(1);
-            expect(geo.getLongitudeOffset).toHaveBeenCalledWith(0, 0,112);
+            expect(geo.getLongitudeOffset).toHaveBeenCalledWith(0, 112);
         });
 
         it('should not get the longitude offset if latitude overlaps the pole', () => {

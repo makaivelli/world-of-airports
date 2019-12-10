@@ -59,7 +59,7 @@ export default class AirportsApi {
      */
     async search(latCentre: number, lonCentre: number, radius: number): Promise<IAirportsResult> {
 
-        const latOffset: number = geo.getLatitudeOffset(latCentre, radius);
+        const latOffset: number = geo.getLatitudeOffset(radius);
         // Handle values under and over 90deg
         const latStart: number = geo.getLatitudeStart(latCentre, latOffset);
         const latEnd: number = geo.getLatitudeEnd(latCentre, latOffset);
@@ -78,7 +78,7 @@ export default class AirportsApi {
             lonStart = -180;
             lonEnd = 180;
         } else {
-            lonOffset = geo.getLongitudeOffset(lonCentre, latCentre, radius);
+            lonOffset = geo.getLongitudeOffset(latCentre, radius);
             // Handle values over and under 180 deg
             lonStart = geo.getLongitudeStart(lonCentre, lonOffset);
             lonEnd = geo.getLongitudeEnd(lonCentre, lonOffset);
