@@ -1,7 +1,7 @@
-/*
- Helper with every co-ord and globe specific logic.
- Doing math with floats in JS is probably not the best idea,
- but here we need only 'rough' estimations
+/**
+ * Helper with every co-ord and globe specific logic.
+ * Doing math with floats in JS is not always the best idea,
+ * but here we need only 'rough' estimations.
  */
 
 // ~ Earth's mean radius in km
