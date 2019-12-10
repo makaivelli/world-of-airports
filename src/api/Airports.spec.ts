@@ -1,5 +1,5 @@
 import AirportsApi from './Airports';
-import AirportDB from '../airportDB';
+import AirportDB from '../db/AirportModelWrapper';
 import geo from '../helpers/geo';
 import { mocked } from 'ts-jest/utils';
 
