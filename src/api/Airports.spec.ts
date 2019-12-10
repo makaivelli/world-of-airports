@@ -1,14 +1,28 @@
 import AirportsApi from './Airports';
-import AirportDB from '../db/AirportModelWrapper';
 import geo from '../helpers/geo';
-import { mocked } from 'ts-jest/utils';
 
-jest.mock('../airportDB');
 jest.mock('../helpers/geo');
 
-const airportsApi = new AirportsApi();
-
 describe('Airports API', () => {
+    const mockAirportModelWrapper = {
+        findAirports: jest.fn(function() {
+            return Promise.resolve({
+                bookmark: 'whatever',
+                total_rows: 3,
+                rows: [{
+                    id: 1,
+                    order: [1, 2],
+                    fields: {
+                        lat: 1,
+                        lon: 2,
+                        name: 'test'
+                    }
+                }]
+            });
+        }),
+    };
+    const airportsApi = new AirportsApi(mockAirportModelWrapper);
+
     afterEach(() => {
         jest.clearAllMocks();
     });
@@ -98,21 +112,63 @@ describe('Airports API', () => {
             geo.getLatitudeStart = jest.fn().mockImplementation(() => 89);
             geo.getLatitudeEnd = jest.fn().mockImplementation(() => 90);
             geo.isOverThePole = jest.fn().mockImplementation(() => true);
-            mocked(AirportDB.findAirports).mockResolvedValue([]);
 
             airportsApi.search(89, 0, 224);
-            expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
-            expect(AirportDB.findAirports).toHaveBeenCalledWith([89, 90], [-180, 180], 224);
+            expect(mockAirportModelWrapper.findAirports).toHaveBeenCalledTimes(1);
+            expect(mockAirportModelWrapper.findAirports).toHaveBeenCalledWith([89, 90], [-180, 180]);
         });
+
+        it('should return the results in expected format', async () => {
+            geo.getLatitudeOffset = jest.fn().mockImplementation(() => 2);
+            geo.getLatitudeStart = jest.fn().mockImplementation(() => 89);
+            geo.getLatitudeEnd = jest.fn().mockImplementation(() => 90);
+            geo.isOverThePole = jest.fn().mockImplementation(() => true);
+
+            const result = await airportsApi.search(89, 0, 224);
+
+            // Test if pagination object is created
+            expect(result).toEqual({
+                airports: [],
+                pagination: {
+                    remainingPages: 2,
+                    bookmark: 'whatever',
+                    query: {
+                        latRange: [89, 90],
+                        lonRange: [-180, 180],
+                        latCentre: 89,
+                        lonCentre: 0,
+                        radius: 224
+                    }
+                }
+            });
+        })
     });
 
     describe('getNextPage', () => {
         it(`should call 'findAirports with expected params`, () => {
-            mocked(AirportDB.findAirports).mockResolvedValue([]);
+            airportsApi.getNextPage('g1AAAAE...', 2, [-1, 1], [-2, 2], 0, 0, 112);
+            expect(mockAirportModelWrapper.findAirports).toHaveBeenCalledTimes(1);
+            expect(mockAirportModelWrapper.findAirports).toHaveBeenCalledWith([-1, 1], [-2, 2], 'g1AAAAE...');
+        });
 
-            airportsApi.getNextPage('g1AAAAE...', [-2, 2], [5, 7], 300);
-            expect(AirportDB.findAirports).toHaveBeenCalledTimes(1);
-            expect(AirportDB.findAirports).toHaveBeenCalledWith([-2, 2], [5, 7], 300);
+        it('should return the results in expected format', async () => {
+            const result = await airportsApi.getNextPage('g1AAAAE...', 2, [-1, 1], [-2, 2], 0, 0, 112);
+
+            // Test if bookmark and remainingPages is updated
+            expect(result).toEqual({
+                airports: [],
+                pagination: {
+                    remainingPages: 1,
+                    bookmark: 'whatever',
+                    query: {
+                        latRange: [-1, 1],
+                        lonRange: [-2, 2],
+                        latCentre: 0,
+                        lonCentre: 0,
+                        radius: 112
+                    }
+                }
+            });
         });
     });
 });
