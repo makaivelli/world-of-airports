@@ -35,7 +35,7 @@ const isOverThePole = (latCentre: number, latOffset: number) => {
 const getLongitudeOffset = (latCentre: number, radius: number) => {
     // https://en.wikipedia.org/wiki/Longitude#Length_of_a_degree_of_longitude
     // Longitude lengths are between 111.320 and 0 km, depending on the latitude. Using here 10-20% overestimation.
-    // Minimum return value is 1 to avoid edge cases (close to the pole and small radius)
+
     const latCentreRad: number = toRadians(latCentre);
     const kmPerDeg: number = toRadians(1) * R * Math.cos(latCentreRad);
 
@@ -43,17 +43,19 @@ const getLongitudeOffset = (latCentre: number, radius: number) => {
     const plus10Percent = offsetDeg * 1.1;
     const roundUpToOneDecimal = Math.ceil(plus10Percent * 10) / 10;
 
+    // Minimum return value is 1 to avoid edge cases (close to the pole and small radius)
     return Math.max(1, roundUpToOneDecimal);
 };
 
 const getLatitudeOffset = (radius: number) => {
     // https://en.wikipedia.org/wiki/Latitude#Length_of_a_degree_of_latitude
     // Latitude lengths are between 110.574 km and 111.694 km. Using here a rough (over)estimation.
-    // Minimum return value is 1 to avoid edge cases.
+
     const kmPerDeg = 111.7;
 
     const offsetDeg:number = Math.ceil(radius / kmPerDeg);
 
+    // Minimum return value is 1 to avoid edge cases.
     return Math.max(1, offsetDeg);
 };
 
@@ -78,7 +80,12 @@ const getDistance = (latCentre: number, latTarget: number, lonCentre: number, lo
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-    return R * c;
+    const haversineDistance = R * c;
+
+    // Return 0 if calculation returns bigger than the max possible value (edge cases at the poles)
+    // A simple comparison doesn't work with standard JS Number handling. Normally I'd use a library like BigInteger.js
+    const isBig = R - haversineDistance == R;
+    return isBig ? 0 : haversineDistance;
 };
 
 const geo = {
