@@ -18,6 +18,11 @@ In new terminal window
 3. `npm run start`
 4. open localhost:3000 in browser
 
+### Notes
+Using a React client for a small coding task like this might be an overkill.
+But it would make more sense in production, because of the virtual DOM (good performance with updating long lists),
+and using the same test runner (Jest comes bundled with `create-react-app`) makes the testing easier.
+
 #### What would I improve (if I have more time)
 - add validation to next page query (now I just validate if they are there, but assume the client uses the returned query data)
 - add tests for React client
