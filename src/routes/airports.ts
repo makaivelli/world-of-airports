@@ -37,7 +37,7 @@ export default class AirportsRoute {
 
         // Handle first search
         // lat, lon and radius are required if first page search
-        if (!lat || !lon || !rad) {
+        if (lat === undefined || lon === undefined || rad === undefined) {
             return res.status(400).json({
                 status: 'error',
                 message: `Fields 'lat', 'lon' and 'range' are required when 'prevQuery' is not present`,
@@ -77,16 +77,16 @@ export default class AirportsRoute {
 
         // Validate radius: 1 <= number <= 500 - arbitrary, but probably sensible radius limit
         rad = parseFloat(rad);
-        if (isNaN(lat)) {
+        if (isNaN(rad)) {
             return res.status(400).json({
                 status: 'error',
-                message: `Field 'radius', must be a number`,
+                message: `Field 'rad', must be a number`,
             });
         }
         if (rad < 1 || rad > 500) {
             return res.status(400).json({
                 status: 'error',
-                message: `Field 'radius', must be in the range of [1, 500]`,
+                message: `Field 'rad', must be in the range of [1, 500]`,
             });
         }
 
