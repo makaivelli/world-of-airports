@@ -22,12 +22,18 @@ export default class AirportsRoute {
         if (prevQuery) {
             let prevQueryObj = JSON.parse(prevQuery);
             const { bookmark, query, remainingPages } = prevQueryObj;
-            const { latRange, lonRange, radius, latCentre, lonCentre } = query;
             // Manual validation - if it weren't a coding test, I'd use Joi or other validation library
-            if (!bookmark || !latRange || !lonRange || !radius || !remainingPages || lonCentre === undefined || latCentre === undefined) {
+            if (!bookmark || !query || ! remainingPages) {
                 return res.status(400).json({
                     status: 'error',
-                    message: `Fields 'bookmark', 'latRange', 'lonRange', 'radius', 'latCentre', 'lonCentre' and 'remainingPages' are required when 'prevQuery' is present`,
+                    message: `Fields 'bookmark', 'query' and 'remainingPages' are required when 'prevQuery' is present`,
+                });
+            }
+            const { latRange, lonRange, radius, latCentre, lonCentre } = query;
+            if (!latRange || !lonRange || radius === undefined || lonCentre === undefined || latCentre === undefined) {
+                return res.status(400).json({
+                    status: 'error',
+                    message: `Fields 'latRange', 'lonRange', 'radius', 'latCentre' and 'lonCentre' are required in 'query'`,
                 });
             }
 
