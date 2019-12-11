@@ -5,7 +5,7 @@ import * as cors from 'cors';
 import AirportDBWrapper from './db/AirportDBWrapper';
 import AirportModelWrapper from './db/AirportModelWrapper';
 import AirportsApi from './api/Airports';
-import AirportsRoute from './routes/airports';
+import AirportsRoute from './routes/Airports';
 
 const airportDBWrapper = new AirportDBWrapper();
 const airportModelWrapper = new AirportModelWrapper(airportDBWrapper);
