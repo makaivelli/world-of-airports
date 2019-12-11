@@ -1,22 +1,25 @@
 # world-of-airports
 
-run server:
-npm install
-npm run start
+## Running the app
+Both server and client needs to be running.
+Prerequisite: Node (8+ needed) installed
 
-Run client:
-cd client
-npm install
-npm run start
-open browser on localhost:3000
+### Run Server:
+In a terminal window:
+1. `cd server`
+2. `npm install`
+3. `npm run start`
+Keep terminal open.
 
-node needed (8+ ?);
+### Run client:
+In new terminal window
+1. `cd client`
+2. `npm install`
+3. `npm run start`
+4. open localhost:3000 in browser
 
 TODO:
-- fix tests (AirportModelWrapper mock???, others to update)
-- integration tests? (testing results against real data?)
 - clean up
-- offset precision (now ceil, but need +10% - ceil doesn't add enough overhead if result close to next is integer)
 - move client folder
 - update npm commands (one for add)
 - TS to react?

@@ -7,7 +7,7 @@
  Integration test for the math?
  */
 
-import geo from '../helpers/geo';
+import geo from './geo';
 
 describe('geo helper', () => {
     describe('getLatitudeStart', () => {
