@@ -1,6 +1,5 @@
 import * as express from 'express';
 
-
 /**
  * Single route for getting the first and subsequent pages of airports in a radius (km) from a starting co-ord.
  * 1. Handling first / next page logic:
@@ -11,25 +10,26 @@ import * as express from 'express';
  * B) `lat` -90 <= number <= 90, `lon` -180 <= number <= 180, `rad` 1 <= number <= 500
  */
 export default class AirportsRoute {
-    private airportsApi: any;
+    private readonly airportsApi: any;
     constructor(airportsApi) {
         this.airportsApi = airportsApi;
+        this.get = this.get.bind(this);
     }
 
-    public async get (req: express.Request, res: express.Response): Promise<any> {
+    public async get(req: express.Request, res: express.Response): Promise<any> {
         // Handle next page search
-        let { prevQuery, lat, lon, rad } = req.query;
+        let {prevQuery, lat, lon, rad} = req.query;
         if (prevQuery) {
             let prevQueryObj = JSON.parse(prevQuery);
-            const { bookmark, query, remainingPages } = prevQueryObj;
+            const {bookmark, query, remainingPages} = prevQueryObj;
             // Manual validation - if it weren't a coding test, I'd use Joi or other validation library
-            if (!bookmark || !query || ! remainingPages) {
+            if (!bookmark || !query || !remainingPages) {
                 return res.status(400).json({
                     status: 'error',
                     message: `Fields 'bookmark', 'query' and 'remainingPages' are required when 'prevQuery' is present`,
                 });
             }
-            const { latRange, lonRange, radius, latCentre, lonCentre } = query;
+            const {latRange, lonRange, radius, latCentre, lonCentre} = query;
             if (!latRange || !lonRange || radius === undefined || lonCentre === undefined || latCentre === undefined) {
                 return res.status(400).json({
                     status: 'error',

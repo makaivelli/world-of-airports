@@ -1,4 +1,4 @@
-import AirportsRoute from './Airports';
+import AirportsRoute from './AirportsRoute';
 import * as express from 'express';
 
 describe('AirportsRoute', () => {

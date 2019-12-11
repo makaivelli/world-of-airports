@@ -1,4 +1,4 @@
-import AirportsApi from './Airports';
+import AirportsApi from './AirportsApi';
 import geo from '../helpers/geo';
 
 jest.mock('../helpers/geo');
