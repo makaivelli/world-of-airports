@@ -20,5 +20,5 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - ./server:/server
+      - ./server/src/:/server/src
       - /server/node_modules
