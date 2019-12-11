@@ -122,4 +122,44 @@ describe('geo helper', () => {
             });
         });
     });
+
+    describe('getDistance', () => {
+        it('should return the real distances with 10% accuracy', () => {
+            const startPoints = [
+                {latCentre: 0, lonCentre: 0},
+                {latCentre: 15, lonCentre: -30},
+                {latCentre: -45, lonCentre: 90},
+                {latCentre: 60, lonCentre: -120},
+                {latCentre: -75, lonCentre: 150},
+                {latCentre: 90, lonCentre: -180},
+            ];
+
+            const endPoints = [
+                {latTarget: 0, lonTarget: 0},
+                {latTarget: -15, lonTarget: 30},
+                {latTarget: 45, lonTarget: -90},
+                {latTarget: 60, lonTarget: 120},
+                {latTarget: -75, lonTarget: -150},
+                {latTarget: 90, lonTarget: 180},
+            ];
+
+            const realDistances = [
+                0,
+                7384,
+                20002,
+                5702,
+                1652,
+                0
+            ];
+
+            startPoints.map((startPoint, index) => {
+                const endPoint = endPoints[index];
+                const distance = geo.getDistance(startPoint.latCentre, endPoint.latTarget, startPoint.lonCentre, endPoint.lonTarget);
+                const lowerBound = realDistances[index] * 0.9;
+                expect(distance).toBeGreaterThanOrEqual(lowerBound);
+                const upperBound = realDistances[index] * 1.1;
+                expect(distance).toBeLessThanOrEqual(upperBound);
+            })
+        });
+    })
 });
