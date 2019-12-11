@@ -6,6 +6,9 @@ describe('AirportsRoute', () => {
         search: jest.fn(function() {
             return Promise.resolve('api search response');
         }),
+        getNextPage: jest.fn(function() {
+            return Promise.resolve('api getNextPage response');
+        }),
     };
     const airportsRoute = new AirportsRoute(mockAirportsApi);
 
@@ -214,6 +217,59 @@ describe('AirportsRoute', () => {
 
                 await airportsRoute.get(request, resp);
                 expect(resp.json).toHaveBeenCalledWith('api search response');
+            });
+        });
+
+        describe('getting next page', () => {
+            it(`should call 'aiportsApi.getNextPage' with expected params when 'prevQuery' is present`, () => {
+                const prevQueryObj = {
+                    bookmark: 'bookmark',
+                    remainingPages: 6,
+                    query: {
+                        latRange: [1, 3],
+                        lonRange: [2, 5],
+                        latCentre: 2,
+                        lonCentre: 3,
+                        radius: 100
+                    }
+                };
+
+                const request = {
+                    query: {
+                        prevQuery: JSON.stringify(prevQueryObj)
+                    }
+                } as express.Request;
+
+                const resp = mockResponse() as express.Response;
+
+                airportsRoute.get(request, resp);
+                expect(mockAirportsApi.getNextPage).toHaveBeenCalledTimes(1);
+                expect(mockAirportsApi.getNextPage).toHaveBeenCalledWith('bookmark', 6, [1, 3], [2, 5], 2, 3, 100);
+            });
+
+            it(`should return 'aiportsApi.getNextPage's response`, async () => {
+                const prevQueryObj = {
+                    bookmark: 'bookmark',
+                    remainingPages: 6,
+                    query: {
+                        latRange: [1, 3],
+                        lonRange: [2, 5],
+                        latCentre: 2,
+                        lonCentre: 3,
+                        radius: 100
+                    }
+                };
+
+                const request = {
+                    query: {
+                        prevQuery: JSON.stringify(prevQueryObj)
+                    }
+                } as express.Request;
+
+                const resp = mockResponse() as express.Response;
+
+                await airportsRoute.get(request, resp);
+                expect(resp.json).toHaveBeenCalledWith('api getNextPage response');
             });
         })
     });
