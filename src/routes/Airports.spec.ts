@@ -10,6 +10,7 @@ describe('AirportsRoute', () => {
             return Promise.resolve('api getNextPage response');
         }),
     };
+
     const airportsRoute = new AirportsRoute(mockAirportsApi);
 
     const mockResponse = () => {
@@ -184,93 +185,69 @@ describe('AirportsRoute', () => {
         });
 
         describe('searching', () => {
+            const query = {
+                rad: 1,
+                lat: 2,
+                lon: 3
+            };
+
+            const request = {
+                query
+            } as express.Request;
+
             it(`should call 'aiportsApi.search' with expected params when 'prevQuery' is not present`, () => {
-                const query = {
-                    rad: 1,
-                    lat: 2,
-                    lon: 3
-                };
-
-                const request = {
-                    query
-                } as express.Request;
-
                 const resp = mockResponse() as express.Response;
 
                 airportsRoute.get(request, resp);
+
                 expect(mockAirportsApi.search).toHaveBeenCalledTimes(1);
                 expect(mockAirportsApi.search).toHaveBeenCalledWith(2, 3, 1);
             });
 
             it(`should return 'aiportsApi.search's response`, async () => {
-                const query = {
-                    rad: 1,
-                    lat: 2,
-                    lon: 3
-                };
-
-                const request = {
-                    query
-                } as express.Request;
-
                 const resp = mockResponse() as express.Response;
 
                 await airportsRoute.get(request, resp);
+
                 expect(resp.json).toHaveBeenCalledWith('api search response');
             });
         });
 
         describe('getting next page', () => {
+            const prevQueryObj = {
+                bookmark: 'bookmark',
+                remainingPages: 6,
+                query: {
+                    latRange: [1, 3],
+                    lonRange: [2, 5],
+                    latCentre: 2,
+                    lonCentre: 3,
+                    radius: 100
+                }
+            };
+
+            const request = {
+                query: {
+                    prevQuery: JSON.stringify(prevQueryObj)
+                }
+            } as express.Request;
+
             it(`should call 'aiportsApi.getNextPage' with expected params when 'prevQuery' is present`, () => {
-                const prevQueryObj = {
-                    bookmark: 'bookmark',
-                    remainingPages: 6,
-                    query: {
-                        latRange: [1, 3],
-                        lonRange: [2, 5],
-                        latCentre: 2,
-                        lonCentre: 3,
-                        radius: 100
-                    }
-                };
-
-                const request = {
-                    query: {
-                        prevQuery: JSON.stringify(prevQueryObj)
-                    }
-                } as express.Request;
-
                 const resp = mockResponse() as express.Response;
 
                 airportsRoute.get(request, resp);
+
                 expect(mockAirportsApi.getNextPage).toHaveBeenCalledTimes(1);
                 expect(mockAirportsApi.getNextPage).toHaveBeenCalledWith('bookmark', 6, [1, 3], [2, 5], 2, 3, 100);
             });
 
             it(`should return 'aiportsApi.getNextPage's response`, async () => {
-                const prevQueryObj = {
-                    bookmark: 'bookmark',
-                    remainingPages: 6,
-                    query: {
-                        latRange: [1, 3],
-                        lonRange: [2, 5],
-                        latCentre: 2,
-                        lonCentre: 3,
-                        radius: 100
-                    }
-                };
-
-                const request = {
-                    query: {
-                        prevQuery: JSON.stringify(prevQueryObj)
-                    }
-                } as express.Request;
-
                 const resp = mockResponse() as express.Response;
 
                 await airportsRoute.get(request, resp);
+
                 expect(resp.json).toHaveBeenCalledWith('api getNextPage response');
             });
-        })
+        });
     });
 });
