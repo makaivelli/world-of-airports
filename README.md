@@ -17,11 +17,3 @@ In new terminal window
 2. `npm install`
 3. `npm run start`
 4. open localhost:3000 in browser
-
-TODO:
-- clean up
-- move client folder
-- update npm commands (one for add)
-- TS to react?
-- clean up react
-- types for classes
