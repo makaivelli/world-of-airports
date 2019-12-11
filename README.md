@@ -34,7 +34,6 @@ and using the same test runner (Jest comes bundled with `create-react-app`) make
 ### What would I improve (if I have more time)
 - add validation to next page query (now I just validate if they are there, but assume the client uses the returned query data)
 - add tests for React client
-- use docker to ensure environment prerequisites and making easier to run
 
 ### What would I do differently if it's not a coding test
 - using an external library for geo logic (distance, etc)
