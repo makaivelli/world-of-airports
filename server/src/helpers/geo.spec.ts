@@ -143,6 +143,7 @@ describe('geo helper', () => {
                 {latTarget: 90, lonTarget: 180},
             ];
 
+            // Data from https://www.nhc.noaa.gov/gccalc.shtml
             const realDistances = [
                 0,
                 7384,
