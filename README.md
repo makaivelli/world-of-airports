@@ -8,6 +8,7 @@ Prerequisite: Node (8+) installed
 In a terminal window:
 1. `cd server`
 2. `npm install`
+3. `npm run build`
 3. `npm run start`
 Keep terminal open.
 
