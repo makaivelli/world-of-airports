@@ -36,10 +36,10 @@ const getLongitudeOffset = (latCentre: number, radius: number) => {
     // https://en.wikipedia.org/wiki/Longitude#Length_of_a_degree_of_longitude
     // Longitude lengths are between 111.320 and 0 km, depending on the latitude. Using here 10-20% overestimation.
 
-    const latCentreRad: number = toRadians(latCentre);
-    const kmPerDeg: number = toRadians(1) * R * Math.cos(latCentreRad);
+    const latCentreRad = toRadians(latCentre);
+    const kmPerDeg = toRadians(1) * R * Math.cos(latCentreRad);
 
-    const offsetDeg: number = radius / kmPerDeg;
+    const offsetDeg = radius / kmPerDeg;
     const plus10Percent = offsetDeg * 1.1;
     const roundUpToOneDecimal = Math.ceil(plus10Percent * 10) / 10;
 
@@ -53,13 +53,13 @@ const getLatitudeOffset = (radius: number) => {
 
     const kmPerDeg = 111.7;
 
-    const offsetDeg:number = Math.ceil(radius / kmPerDeg);
+    const offsetDeg = Math.ceil(radius / kmPerDeg);
 
     // Minimum return value is 1 to avoid edge cases.
     return Math.max(1, offsetDeg);
 };
 
-const isInRadius = (radius, distance) => {
+const isInRadius = (radius: number, distance: number) => {
     return radius >= distance;
 };
 
@@ -69,10 +69,10 @@ const compareByDistance = (a, b) => {
 
 const getDistance = (latCentre: number, latTarget: number, lonCentre: number, lonTarget: number) => {
     // Using 'haversine formula' - https://www.movable-type.co.uk/scripts/latlong.html
-    const deltaLatRad: number = toRadians(latTarget - latCentre);
-    const deltaLonRad: number = toRadians(lonTarget - lonCentre);
-    const latCentreRad: number = toRadians(latCentre);
-    const latTargetRad: number = toRadians(latTarget);
+    const deltaLatRad = toRadians(latTarget - latCentre);
+    const deltaLonRad = toRadians(lonTarget - lonCentre);
+    const latCentreRad = toRadians(latCentre);
+    const latTargetRad = toRadians(latTarget);
 
     const a = Math.sin(deltaLatRad/2) * Math.sin(deltaLatRad/2) +
         Math.cos(latCentreRad) * Math.cos(latTargetRad) *
