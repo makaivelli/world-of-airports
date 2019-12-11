@@ -85,4 +85,41 @@ describe('geo helper', () => {
             });
         });
     });
+
+    describe('getLongitudeOffset', () => {
+        it('should not return smaller value than the real offset', () => {
+            const latCentres = [0, 15, 30, 45, 60, 75, 89];
+            const radius = [111.320, 107.551, 96.486, 78.847, 55.800, 28.902, 1];
+            // https://en.wikipedia.org/wiki/Longitude#Length_of_a_degree_of_longitude
+
+            latCentres.map((latCentre, index) => {
+                const latOffset = geo.getLongitudeOffset(latCentre, radius[index]);
+                expect(latOffset).toBeGreaterThanOrEqual(1);
+            });
+        });
+
+        it('should not return bigger value than the real offset + 20%', () => {
+            const latCentres = [0, 15, 30, 45, 60, 75, 89];
+            const radius = [111.320, 107.551, 96.486, 78.847, 55.800, 28.902, 1];
+            // https://en.wikipedia.org/wiki/Longitude#Length_of_a_degree_of_longitude
+
+            latCentres.map((latCentre, index) => {
+                const latOffset = geo.getLongitudeOffset(latCentre, radius[index] * 20);
+                expect(latOffset).toBeLessThanOrEqual(24);
+            });
+        });
+    });
+
+    describe('getLatitudeOffset', () => {
+        it('should return the expected latitude offsets', () => {
+            const latCentres = [0, 15, 30, 45, 60, 75, 90];
+            // https://en.wikipedia.org/wiki/Latitude#Length_of_a_degree_of_latitude
+            const radius = [110.574, 110.649, 110.852, 111.133, 111.412, 111.618, 111.694];
+
+            latCentres.map((latCentre, index) => {
+                const latOffset = geo.getLatitudeOffset(radius[index]);
+                expect(latOffset).toEqual(1);
+            });
+        });
+    });
 });
