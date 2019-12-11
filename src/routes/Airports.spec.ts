@@ -4,7 +4,7 @@ import * as express from 'express';
 describe('AirportsRoute', () => {
     const mockAirportsApi = {
         search: jest.fn(function() {
-            return;
+            return Promise.resolve('api search response');
         }),
     };
     const airportsRoute = new AirportsRoute(mockAirportsApi);
@@ -22,6 +22,7 @@ describe('AirportsRoute', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
+
     describe('get', () => {
         describe('validation', () => {
             describe('of first query', () => {
@@ -178,5 +179,42 @@ describe('AirportsRoute', () => {
                 });
             });
         });
+
+        describe('searching', () => {
+            it(`should call 'aiportsApi.search' with expected params when 'prevQuery' is not present`, () => {
+                const query = {
+                    rad: 1,
+                    lat: 2,
+                    lon: 3
+                };
+
+                const request = {
+                    query
+                } as express.Request;
+
+                const resp = mockResponse() as express.Response;
+
+                airportsRoute.get(request, resp);
+                expect(mockAirportsApi.search).toHaveBeenCalledTimes(1);
+                expect(mockAirportsApi.search).toHaveBeenCalledWith(2, 3, 1);
+            });
+
+            it(`should return 'aiportsApi.search's response`, async () => {
+                const query = {
+                    rad: 1,
+                    lat: 2,
+                    lon: 3
+                };
+
+                const request = {
+                    query
+                } as express.Request;
+
+                const resp = mockResponse() as express.Response;
+
+                await airportsRoute.get(request, resp);
+                expect(resp.json).toHaveBeenCalledWith('api search response');
+            });
+        })
     });
 });
