@@ -1,0 +1,24 @@
+version: "3"
+services:
+  client:
+    container_name: woa-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: makaivelli/woa-client
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/client
+      - /client/node_modules
+  server:
+    container_name: woa-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: makaivelli/woa-server
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/server
+      - /server/node_modules
