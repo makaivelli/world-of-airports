@@ -3,11 +3,11 @@
 ## Running the app
 Using Docker (needs to be installed) or Node (8+ needs to be installed)
 
-### Using docker
+### Using Docker
 1. Run `docker-compose up` in terminal
 2. Open `localhost:3000` in browser 
 
-### Using local node environment
+### Using locally installed Node
 Both server and client needs to be running.
 Prerequisite: Node (8+) installed
 
