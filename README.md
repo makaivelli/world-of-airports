@@ -9,7 +9,7 @@ In a terminal window:
 1. `cd server`
 2. `npm install`
 3. `npm run build`
-3. `npm run start`
+3. `npm run start` <br />
 Keep terminal open.
 
 ### Run client:
@@ -17,7 +17,7 @@ In new terminal window
 1. `cd client`
 2. `npm install`
 3. `npm run start`
-4. open localhost:3000 in browser
+4. open `localhost:3000` in browser
 
 ### Notes
 Using a React client for a small coding task like this might be an overkill.
